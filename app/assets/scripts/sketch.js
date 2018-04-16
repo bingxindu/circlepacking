@@ -29,7 +29,10 @@ class Circle {
   }
 
   grow() {
-    if (this.growing) {
+    if (this.isTouchingAnotherCircle()) {
+      this.growing = false;
+    } else {
+      this.growing = true;
       this.r += this.growRate * 5;
     }
   }
@@ -42,7 +45,25 @@ class Circle {
       this.y - this.r < 0
     );
   }
+
+  isTouchingAnotherCircle() {
+    for (let i = 0; i < circles.length; i++) {
+      if (this.x !== circles[i].x && this.y !== circles[i].y) {
+        let sumOfTwoRadii = this.r + circles[i].r;
+        let a = this.x - circles[i].x;
+        let b = this.y - circles[i].y;
+        let distanceBetweenTwoCircles = Math.sqrt(a * a + b * b);
+        if (distanceBetweenTwoCircles < sumOfTwoRadii) {
+          return true;
+          break;
+        }
+      }
+    }
+    return false;
+  }
 }
+
+/*****************************/
 
 /*****************************/
 // valid means the circle will not overlap any other circle
@@ -61,9 +82,6 @@ function isValidSpawnPoint(x, y, r) {
       break;
     }
   }
-
-  console.log(isValidSpawnPoint);
-
   return isValidSpawnPoint;
 }
 
@@ -106,7 +124,14 @@ function draw() {
     if (circles[i].isAtEdge()) {
       circles[i].growing = false;
     }
+
+    // if (circles[i].isTouchingAnotherCircle()) {
+    //   circles[i].growing = false;
+    // }
+
     circles[i].show();
-    // circles[i].grow();
+    circles[i].grow();
+
+    // circles[i].growing && circles[i].grow();
   }
 }
